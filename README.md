@@ -1,11 +1,11 @@
 # MyRoverServiceAPI
 This is an API that fetches rovers images from Nasa API for a given earth day.
 
-# Target framework
+## Target framework
 
 This is based on asp.net core 5 framework.
 
-# Dependencies that can be added through Nuget
+### Dependencies that can be added through Nuget
 ```
 "AutoMapper" Version="10.1.1"
 "AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1"
@@ -18,7 +18,7 @@ This is based on asp.net core 5 framework.
 "Serilog.Sinks.File" Version="5.0.0"
 "Swashbuckle.AspNetCore" Version="6.1.4"
 ```
-# End point Details:
+## End point Details:
 
 This API exposes a **POST** end point  **(/api/v1/rover)**. This can be verified using the added swagger page **(/swagger/index.html)**
 
@@ -30,7 +30,7 @@ Sample Input
   "earthDate": "2021-06-30"
 }
 ```
-# Rover Names
+### Rover Names
 
 These are the rovers that  NASA API has currently. If any new rover is added, it can be added to RoversEnum.cs  file.
  - Perseverance
@@ -45,7 +45,7 @@ These are the rovers that  NASA API has currently. If any new rover is added, i
 3. If images are not available for a given date, it would return 400 status code with a message.
 4. If too many queries happen within the window time limited by NASA API, then 429 status code would be returned.
 
-# Application Settings
+## Application Settings
 
 The appsettings.json file has following default values for rover that can be modified
 ```
@@ -66,7 +66,7 @@ The appsettings.json file has following default values for rover that can be mod
 5. The project structure is organized into relevant folders. To keep it simple, they are kept in one project. These can be divided into multiple projects like one for Core (that calls NASA API) and another for API that exposes the endpoints.
 6. As there are simple validations, implemented on my own instead of adding one more dependency. If there is more need,I think one can use the FluentValidation library. 
  
-# Next Coming up
+## Next Coming up
  
  1. unit tests, static analysis, performance tests
  2. UI Application to display the images in a web browser
