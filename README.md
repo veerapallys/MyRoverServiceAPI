@@ -20,9 +20,9 @@ This is based on asp.net core 5 framework.
 ```
 # End point Details:
 
-This API exposes a post end point  (/api/v1/rover)
+This API exposes a **POST** end point  **(/api/v1/rover)**. This can be verified using the added swagger page **(/swagger/index.html)**
 
-Input: that accepts below arguments as input(json). 
+**Input**: Accepts below arguments as input(json). Any valid date can be used.
 ```
 Sample Input 
 {
@@ -30,10 +30,22 @@ Sample Input
   "earthDate": "2021-06-30"
 }
 ```
-The roverName can have one of these values {Perseverance,Curiosity,Opportunity,Spirit}. 
-These are the rovers that  NASA API has currently. If any new rover is added, it can be added to RoversEnum.cs  file.
+# Rover Names
 
-Output : The success response would be the list of images in a zip file that can be downloaded.
+These are the rovers that  NASA API has currently. If any new rover is added, it can be added to RoversEnum.cs  file.
+ - Perseverance
+ - Curiosity
+ - Opportunity
+ - Spirit 
+
+**Output** 
+
+1. The success response would be the list of images in a zip file that can be downloaded.
+2. If a given rover is not found, it would return 400 status code with a message.
+3. If images are not available for a given date, it would return 400 status code with a message.
+4. If too many queries happen within the window time limited by NASA API, then 429 status code would be returned.
+
+# Application Settings
 
 The appsettings.json file has following default values for rover that can be modified
 ```
