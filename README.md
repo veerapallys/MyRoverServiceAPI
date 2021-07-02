@@ -47,18 +47,14 @@ The appsettings.json file has following default values for rover that can be mod
   }
 ```
 # Notes
+ 1. The API can be extended to save the images to any cloud storage as it is pluggable by implementing IMyRoverPhotosStorage. Currently it is saved locally.
+2. The data is cached in memory and can be extended to use distributed cache.
+3. Polly Library has been used for retries and circuit breakers.
+4. Serilog is used for logging currently but can be replaced with any logging framework that targets asp.net core 5.
+5. The project structure is organized into relevant folders. To keep it simple, they are kept in one project. These can be divided into multiple projects like one for Core (that calls NASA API) and another for API that exposes the endpoints.
+6. As there are simple validations, implemented on my own instead of adding one more dependency. If there is more need,I think one can use the FluentValidation library. 
  
- 1. The API can be extended to save the images to any cloud storage as it is pluggable by implementing IMyRoverPhotosStorage.
-    Currently it is saved locally.
- 2. The data is cached in memory and can be extended to use distributed cache.
- 3. Polly Library has been used for retries and circuit breakers.
- 4. Serilog is used for logging currently but can be replaced with any logging framework that targets asp.net core 5.
- 5. The project structure is organized into relevant folders. To keep it simple, they are kept in one project. 
-    These can be divided into multiple projects like one for Core (that calls NASA API) and another for API that exposes the endpoints.
- 6. As there are simple validations, implemented on my own instead of adding one more dependency.
-    If there is more need,I think one can use the FluentValidation library.
-   
- # Next Coming up
+# Next Coming up
  
  1. unit tests, static analysis, performance tests
  2. UI Application to display the images in a web browser
