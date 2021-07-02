@@ -18,7 +18,7 @@ This is based on asp.net core 5 framework.
 "Serilog.Sinks.File" Version="5.0.0"
 "Swashbuckle.AspNetCore" Version="6.1.4"
 ```
-#End point Details:
+# End point Details:
 
 This API exposes a post end point  (/api/v1/rover)
 
@@ -46,7 +46,7 @@ The appsettings.json file has following default values for rover that can be mod
     "ImagesDirectoryPath": "./Images"  // By default , the downloaded images from NASA API will be saved in this folder on the server.
   }
 ```
-#Notes
+# Notes
  
  1. The API can be extended to save the images to any cloud storage as it is pluggable by implementing IMyRoverPhotosStorage.
     Currently it is saved locally.
@@ -58,11 +58,11 @@ The appsettings.json file has following default values for rover that can be mod
  6. As there are simple validations, implemented on my own instead of adding one more dependency.
     If there is more need,I think one can use the FluentValidation library.
    
- #Next Coming up
+ # Next Coming up
  
  1. unit tests, static analysis, performance tests
  2. UI Application to display the images in a web browser
 3. Have the application run in a Docker container
- ```
+ 
  If you come across any issues in setting up, please let me know.
-```
+
