@@ -62,7 +62,7 @@ The appsettings.json file has following default values for rover that can be mod
  
  1. unit tests, static analysis, performance tests
  2. UI Application to display the images in a web browser
-3. Have the application run in a Docker container
+ 3. Have the application run in a Docker container
  
  If you come across any issues in setting up, please let me know.
 
