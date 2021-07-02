@@ -22,7 +22,7 @@ This is based on asp.net core 5 framework.
 
 This API exposes a **POST** end point  **(/api/v1/rover)**. This can be verified using the added swagger page **(/swagger/index.html)**
 
-**Input**: Accepts below arguments as input(json). Any valid date can be used.
+**Input**: Accepts below arguments as input(json). Any valid date and in any valid format can be used.
 ```
 Sample Input 
 {
