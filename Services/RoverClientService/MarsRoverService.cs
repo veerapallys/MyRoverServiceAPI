@@ -1,14 +1,14 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.IO;
+﻿using Marvin.StreamExtensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
-using System.Net.Http.Headers;
-using Marvin.StreamExtensions;
 using MyRoverServiceAPI.Exceptions;
 using MyRoverServiceAPI.Services.RoverClientService;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyRoverServiceAPI
 {
@@ -19,9 +19,9 @@ namespace MyRoverServiceAPI
         private readonly IMarsRoverServiceValidator _marsRoverServiceValidator;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly RoverApiSettings _options;
-        
+
         public MarsRoverService(ILogger<MarsRoverService> logger,
-            IOptions<RoverApiSettings> options, 
+            IOptions<RoverApiSettings> options,
             IHttpClientFactory httpClientFactory,
             IMarsRoverServiceValidator marsRoverServiceValidator)
         {
@@ -40,93 +40,89 @@ namespace MyRoverServiceAPI
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            using (var response = await httpClient.SendAsync(request,
+            using var response = await httpClient.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken))
+                cancellationToken);
+            if (!response.IsSuccessStatusCode)
             {
-                if (!response.IsSuccessStatusCode)
+                if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity
+                    || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity
-                        || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        var errorStream = await response.Content.ReadAsStreamAsync();
-                        var validationErrors = errorStream.ReadAndDeserializeFromJson();
-                        _logger.LogError(MarsRoverServiceErrorMessageHelper.GetBadRequestMessage(response.StatusCode, RoverName, "GetManifest", url, validationErrors));
-                        throw new MyRoverServiceValidationException($"Bad request, Rover Name : {RoverName}");
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    {
-                        _logger.LogError(MarsRoverServiceErrorMessageHelper.GetNotFoundMessage(response.StatusCode, RoverName, "GetManifest", url));
-                        throw new NotFoundException("Rover", RoverName);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                    {
-                        var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
-                        _logger.LogError(message);
-                        throw new RoverClientThrottleException(message);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
-                    {
-                        var message = MarsRoverServiceErrorMessageHelper.GetUnAuthorizedMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
-                        _logger.LogError(message);
-                        throw new RoverClientException(message);
-                    }
-                    
-                    response.EnsureSuccessStatusCode();
+                    var errorStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                    var validationErrors = errorStream.ReadAndDeserializeFromJson();
+                    _logger.LogError(MarsRoverServiceErrorMessageHelper.GetBadRequestMessage(response.StatusCode, RoverName, "GetManifest", url, validationErrors));
+                    throw new MyRoverServiceValidationException($"Bad request, Rover Name : {RoverName}");
                 }
-                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogError(MarsRoverServiceErrorMessageHelper.GetNotFoundMessage(response.StatusCode, RoverName, "GetManifest", url));
+                    throw new NotFoundException("Rover", RoverName);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
+                    _logger.LogError(message);
+                    throw new RoverClientThrottleException(message);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    var message = MarsRoverServiceErrorMessageHelper.GetUnAuthorizedMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
+                    _logger.LogError(message);
+                    throw new RoverClientException(message);
+                }
 
-                var roverPhotosManifest = stream.ReadAndDeserializeFromJson<MarsRoverPhotosManifest>();
-                return roverPhotosManifest;
+                response.EnsureSuccessStatusCode();
             }
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+            var roverPhotosManifest = stream.ReadAndDeserializeFromJson<MarsRoverPhotosManifest>();
+            return roverPhotosManifest;
         }
 
         public async Task<MarsRoverPhotos> GetPhotos(RoversEnum RoverName, DateTime EarthDate, int PageId, CancellationToken cancellationToken)
         {
-            _marsRoverServiceValidator.ValidatePage(PageId,RoverName,EarthDate);
+            _marsRoverServiceValidator.ValidatePage(PageId, RoverName, EarthDate);
             var httpClient = _httpClientFactory.CreateClient("RoverApiClient");
             var url = GetPhotosUrl(RoverName, EarthDate, PageId);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            using (var response = await httpClient.SendAsync(request,
+            using var response = await httpClient.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken))
+                cancellationToken);
+            if (!response.IsSuccessStatusCode)
             {
-                if (!response.IsSuccessStatusCode)
+                if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity
+                    || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity
-                        || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        var errorStream = await response.Content.ReadAsStreamAsync();
-                        var validationErrors = errorStream.ReadAndDeserializeFromJson();
-                        _logger.LogError(MarsRoverServiceErrorMessageHelper.GetBadRequestMessage(response.StatusCode, RoverName, "GetPhotos", url, validationErrors));
-                        throw new MyRoverServiceValidationException($"Bad request, Rover Name : {RoverName}");
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    {
-                        _logger.LogError(MarsRoverServiceErrorMessageHelper.GetNotFoundMessage(response.StatusCode, RoverName, "GetPhotos", url));
-                        throw new NotFoundException("Rover", RoverName);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                    {
-                        var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
-                        _logger.LogError(message);
-                        throw new RoverClientThrottleException(message);
-                    }
-                    else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
-                    {
-                        var message = MarsRoverServiceErrorMessageHelper.GetUnAuthorizedMessage(response.StatusCode, RoverName, "GetPhotos", url, API_KEY);
-                        _logger.LogError(message);
-                        throw new RoverClientException(message);
-                    }
-                    response.EnsureSuccessStatusCode();
+                    var errorStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                    var validationErrors = errorStream.ReadAndDeserializeFromJson();
+                    _logger.LogError(MarsRoverServiceErrorMessageHelper.GetBadRequestMessage(response.StatusCode, RoverName, "GetPhotos", url, validationErrors));
+                    throw new MyRoverServiceValidationException($"Bad request, Rover Name : {RoverName}");
                 }
-                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-
-                var roverPhotos = stream.ReadAndDeserializeFromJson<MarsRoverPhotos>();
-                return roverPhotos;
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogError(MarsRoverServiceErrorMessageHelper.GetNotFoundMessage(response.StatusCode, RoverName, "GetPhotos", url));
+                    throw new NotFoundException("Rover", RoverName);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, RoverName, "GetManifest", url, API_KEY);
+                    _logger.LogError(message);
+                    throw new RoverClientThrottleException(message);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    var message = MarsRoverServiceErrorMessageHelper.GetUnAuthorizedMessage(response.StatusCode, RoverName, "GetPhotos", url, API_KEY);
+                    _logger.LogError(message);
+                    throw new RoverClientException(message);
+                }
+                response.EnsureSuccessStatusCode();
             }
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+            var roverPhotos = stream.ReadAndDeserializeFromJson<MarsRoverPhotos>();
+            return roverPhotos;
         }
 
 
@@ -138,27 +134,27 @@ namespace MyRoverServiceAPI
             var response = await httpClient.SendAsync(request,
                  HttpCompletionOption.ResponseHeadersRead,
                  cancellationToken);
-            
-                if (!response.IsSuccessStatusCode)
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                    {
-                        var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, Url, API_KEY);
-                        _logger.LogError(message);
-                        throw new RoverClientThrottleException(message);
-                    }
-                    else
-                    {
-                        var message = $"method: GetRoverPhotoImage, Error returned by api client for url : {Url}, status code : {response.StatusCode} ";
-                        _logger.LogError(message);
-                        throw new RoverClientException(message);
-                    }
+                    var message = MarsRoverServiceErrorMessageHelper.GetTooManyRequestMessage(response.StatusCode, Url, API_KEY);
+                    _logger.LogError(message);
+                    throw new RoverClientThrottleException(message);
                 }
+                else
+                {
+                    var message = $"method: GetRoverPhotoImage, Error returned by api client for url : {Url}, status code : {response.StatusCode} ";
+                    _logger.LogError(message);
+                    throw new RoverClientException(message);
+                }
+            }
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-                return stream;
-       }
+            return stream;
+        }
 
         private string GetPhotosUrl(RoversEnum RoverName, DateTime EarthDate, int PageId)
         {

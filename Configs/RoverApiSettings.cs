@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyRoverServiceAPI
+﻿namespace MyRoverServiceAPI
 {
     public class RoverApiSettings
     {
@@ -14,6 +10,6 @@ namespace MyRoverServiceAPI
         public int ApiCacheAbsoluteExpirationInHours { get; set; }
 
         public string ImagesDirectoryPath { get; set; }
-        
+
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MyRoverServiceAPI.ExceptionHandling;
 using MyRoverServiceAPI.Exceptions;
 using Newtonsoft.Json;
 using System;
@@ -42,7 +41,7 @@ namespace MyRoverServiceAPI.ExceptionHandling
 
             switch (exception)
             {
-                    case MyRoverServiceValidationException myRoverServiceValidationException:
+                case MyRoverServiceValidationException myRoverServiceValidationException:
                     httpStatusCode = HttpStatusCode.BadRequest;
                     result = myRoverServiceValidationException.Message;
                     break;
@@ -54,15 +53,15 @@ namespace MyRoverServiceAPI.ExceptionHandling
                     httpStatusCode = HttpStatusCode.NotFound;
                     result = notFoundException.Message;
                     break;
-                case RoverClientThrottleException roverClientThrottleException:
+                case RoverClientThrottleException:
                     httpStatusCode = HttpStatusCode.TooManyRequests;
                     result = "Sorry, too many photos downloaded in a day. Have a break and come back next day!";
                     break;
-                case RoverClientException roverClientException:
+                case RoverClientException:
                     httpStatusCode = HttpStatusCode.InternalServerError;
                     result = "Sorry, be right back!";
                     break;
-                case Exception ex:
+                case Exception:
                     httpStatusCode = HttpStatusCode.InternalServerError;
                     result = "Sorry, be right back!";
                     break;

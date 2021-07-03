@@ -1,9 +1,5 @@
-﻿using MyRoverServiceAPI.ExceptionHandling;
-using MyRoverServiceAPI.Exceptions;
+﻿using MyRoverServiceAPI.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyRoverServiceAPI.Validators
 {
@@ -16,7 +12,7 @@ namespace MyRoverServiceAPI.Validators
             if (string.IsNullOrWhiteSpace(earthDay))
                 throw new MyRoverServiceValidationException("Earth date is required");
             if (!Enum.TryParse(RoverName, true, out RoversEnum _))
-                throw new NotFoundException("Rover",RoverName);
+                throw new NotFoundException("Rover", RoverName);
             if (!DateTime.TryParse(earthDay, out DateTime _))
                 throw new MyRoverServiceValidationException($"The given earth date, {earthDay} is invalid.");
         }

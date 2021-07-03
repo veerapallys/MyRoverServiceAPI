@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MyRoverServiceAPI.ExceptionHandling;
 using MyRoverServiceAPI.Persistance;
 using MyRoverServiceAPI.Services;
@@ -15,11 +13,8 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace MyRoverServiceAPI
 {
@@ -52,7 +47,7 @@ namespace MyRoverServiceAPI
             });
         }
 
-        private void AddRoverServices(IServiceCollection services)
+        private static void AddRoverServices(IServiceCollection services)
         {
             services.AddScoped<IMyRoversServiceGuard, MyRoversServiceGuard>();
             services.AddScoped<IMarsRoverService, MarsRoverService>();
@@ -64,11 +59,11 @@ namespace MyRoverServiceAPI
             services.AddScoped<IRoverPhotoRepository, RoverPhotoRepository>();
         }
 
-        private void AddHttpClientAndPolly(IServiceCollection services)
+        private static void AddHttpClientAndPolly(IServiceCollection services)
         {
             var retryPolicy = HttpPolicyExtensions
                             .HandleTransientHttpError()
-                            .Or<TimeoutRejectedException>() 
+                            .Or<TimeoutRejectedException>()
                             .WaitAndRetryAsync(new[]
                                 {
                                     TimeSpan.FromSeconds(1),

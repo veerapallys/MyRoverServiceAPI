@@ -7,7 +7,6 @@ using MyRoverServiceAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,24 +14,19 @@ namespace MyRoverServiceAPI
 {
     public class MyMarsRoverService : IMyMarsRoverService
     {
-        
+
         private readonly IMarsRoverService _marsRoverService;
-        private readonly ILogger<MyMarsRoverService> _logger;
-        private readonly IMemoryCache _memoryCache;
         private readonly RoverApiSettings _options;
         private readonly IMyMarsRoverServiceValidator _myMarsRoverServiceValidator;
         private readonly IRoverPhotoRepository _roverPhotoRepository;
 
         public MyMarsRoverService(IMarsRoverService marsRoverService,
-            IOptions<RoverApiSettings> options, ILogger<MyMarsRoverService> logger,
-            IMemoryCache memoryCache,
+            IOptions<RoverApiSettings> options,
             IMyMarsRoverServiceValidator myMarsRoverServiceValidator,
             IRoverPhotoRepository roverPhotoRepository)
         {
             //ToDo: implementation.Unit tests
             _marsRoverService = marsRoverService;
-            _logger = logger;
-            _memoryCache = memoryCache;
             _options = options.Value;
             _myMarsRoverServiceValidator = myMarsRoverServiceValidator;
             _roverPhotoRepository = roverPhotoRepository;
@@ -42,15 +36,11 @@ namespace MyRoverServiceAPI
             var cacheData = _roverPhotoRepository.GetPhotos(RoverName, EarthDay);
             if (cacheData != null)
                 return cacheData;
-            
+
             await GetImagesForMarsRover(_marsRoverService, RoverName, EarthDay, cancellationToken);
             return _roverPhotoRepository.GetPhotos(RoverName, EarthDay);
         }
 
-        private string GetCacheKey(RoversEnum RoverName, DateTime EarthDay)
-        {
-            return $"{MyMarsRoverServiceConstants.RoverServiceCacheKey}-{RoverName}-{EarthDay.ToString(MyMarsRoverServiceConstants.DATE_FORMAT)}";
-        }
         /// <summary>
         /// 1. Asnyc Get Manifest 
         //  2. With parallel processing GetPhotos by page . Since these are I/O intensive and not cpu intensive, async will do. parallel will not add value.
@@ -73,7 +63,7 @@ namespace MyRoverServiceAPI
             var totalPages = GetTotalPages(photosForEarthDay);
             var tasks = ProcessByPage(marsRoverService, RoverName, inputEarthDay, totalPages, cancellationToken);
             await Task.WhenAll(tasks);
-                
+
             foreach (var task in tasks)
             {
                 imageNames.AddRange(task.Result);
@@ -102,7 +92,7 @@ namespace MyRoverServiceAPI
                             //If this is not unique, then need to generate unique id and save
                             var UrlParts = photo.ImageSourceUrl.Split("/");
                             var fileName = UrlParts[^1];
-                            await SaveImageAsync(RoverName, inputDay,marsRoverService, photo.ImageSourceUrl, fileName, cancellationToken);
+                            await SaveImageAsync(RoverName, inputDay, marsRoverService, photo.ImageSourceUrl, fileName, cancellationToken);
                             photoNames.Add(fileName);
                         }
                     }
@@ -120,21 +110,17 @@ namespace MyRoverServiceAPI
 
         private async Task SaveImageAsync(RoversEnum Rover, DateTime EarthDay, IMarsRoverService marsRoverService, string Url, string fileName, CancellationToken cancellationToken)
         {
-            
-            using (var ImageStream = await marsRoverService.GetRoverPhotoImage(Url, cancellationToken))
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                   await ImageStream.CopyToAsync(ms);
 
-                    var photo = new MyRoverPhotoInMemory
-                    {
-                        FileName = fileName,
-                        Contents = ms.ToArray()
-                    };
-                    _roverPhotoRepository.AddPhoto(Rover, EarthDay, photo);
-                }
-            }
+            using var ImageStream = await marsRoverService.GetRoverPhotoImage(Url, cancellationToken);
+            using MemoryStream ms = new MemoryStream();
+            await ImageStream.CopyToAsync(ms,cancellationToken);
+
+            var photo = new MyRoverPhotoInMemory
+            {
+                FileName = fileName,
+                Contents = ms.ToArray()
+            };
+            _roverPhotoRepository.AddPhoto(Rover, EarthDay, photo);
         }
     }
 }
