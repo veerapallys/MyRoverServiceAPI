@@ -20,15 +20,12 @@ This is based on asp.net core 5 framework.
 ```
 #### End point Details:
 
-This API exposes a **POST** end point  **(/api/v1/rover)**. This can be verified using the added swagger page **(/swagger/index.html)**
+This API exposes a **GET** end point  **(/api/v1/rover/name/{RoverName}/day/{EarthDate})**. This can be verified using the added swagger page **(/swagger/index.html)**
 
-**Input**: Accepts below arguments as input(json). Any valid date and in any valid format can be used.
+**Input**: Any valid rover and date and in a valid format can be used.
 ```
-Sample Input 
-{
-  "roverName": "curiosity",
-  "earthDate": "2021-06-30"
-}
+ /api/v1/rover/name/curiosity/day/2021-06-30
+ 
 ```
 **Rover Names**
 
@@ -37,6 +34,15 @@ These are the rovers that  NASA API has currently. If any new rover is added, i
  - Curiosity
  - Opportunity
  - Spirit 
+
+**Sample Dates**
+
+- 02/27/17
+- June 2, 2018
+- Jul-13-2016
+- April 30, 2018
+- 2021-06-30
+Not only the above, other dates can be used as well. The above samples illustrates various date formats.
 
 **Output** 
 
@@ -60,15 +66,19 @@ The appsettings.json file has following default values for rover that can be mod
 ```
 ### Notes
  1. The API can be extended to save the images to any cloud storage as it is pluggable by implementing IMyRoverPhotosStorage. Currently it is saved locally.
-2. The data is cached in memory and can be extended to use distributed cache.
+2. The data is cached in memory for performance and can be extended to use distributed cache. Also, response caching is used.
 3. Polly Library has been used for retries and circuit breakers.
-4. Serilog is used for logging currently but can be replaced with any logging framework that targets asp.net core 5.
-5. The project structure is organized into relevant folders. To keep it simple, they are kept in one project. These can be divided into multiple projects like one for Core (that calls NASA API) and another for API that exposes the endpoints.
-6. As there are simple validations, implemented on my own instead of adding one more dependency. If there is more need,I think one can use the FluentValidation library. 
+4. Asynchronous programming is used for performance reasons.
+5. Serilog is used for logging currently but can be replaced with any logging framework that targets asp.net core 5.
+6. The project structure is organized into relevant folders. To keep it simple, they are kept in one project. These can be divided into multiple projects like one for Core (that calls NASA API) and another for API that exposes the endpoints.
+7. As there are simple validations, implemented on my own instead of adding one more dependency. If there is more need,I think one can use the FluentValidation library. 
+8. Global Exception handling is used for better presentation of messages.
+9. Filter is used to handle the date encoding issue in url path. 
+10. Static Analysis is completed with Visual Studio built-in code analyzer.
  
 #### Next Coming up
  
- 1. unit tests, static analysis, performance tests
+ 1. unit tests, performance tests
  2. UI Application to display the images in a web browser
  3. Have the application run in a Docker container
  
