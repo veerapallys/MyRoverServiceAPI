@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRoverServiceAPI", ".\MyRoverServiceAPI\MyRoverServiceAPI.csproj", "{EB9EE1B4-EFCC-4213-9987-EE932CA463B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRoverServiceAPI", "MyRoverServiceAPI.csproj", "{EB9EE1B4-EFCC-4213-9987-EE932CA463B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRoversServiceAPI.UnitTests", ".\MyRoversServiceAPI.UnitTests\MyRoversServiceAPI.UnitTests.csproj", "{9D5C2BE6-8064-4821-AA0C-B5778310E94A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRoversServiceAPI.UnitTests", "..\MyRoversServiceAPI.UnitTests\MyRoversServiceAPI.UnitTests.csproj", "{9D5C2BE6-8064-4821-AA0C-B5778310E94A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FEF9DDD1-929F-4A59-839A-16F59646D1CE}"
 EndProject
