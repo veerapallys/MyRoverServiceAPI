@@ -24,7 +24,7 @@ This API exposes a **GET** end point  **(/api/v1/rover/name/{RoverName}/day/{Ea
 
 **Input**: Any valid rover and date and in a valid format can be used.
 ```
- /api/v1/rover/name/curiosity/day/2021-06-30
+ /api/v1/rover/name/curiosity?earthdate=2021-06-30
  
 ```
 **Rover Names**
@@ -76,12 +76,12 @@ The appsettings.json file has following default values for rover that can be mod
 9. Filter is used to handle the date encoding issue in url path. 
 10. Static Analysis is completed with Visual Studio built-in code analyzer.
 11. Added unit tests in a seperate project. XUnit,Moq and Shouldly packages have been used. 
+12. Added jmeter script for performance testing the API. Also added the VS profiler snapshot.
 
 #### Next Coming up
  
- 1. performance tests
- 2. UI Application to display the images in a web browser
- 3. Have the application run in a Docker container
+ 1. UI Application to display the images in a web browser
+ 2. Have the application run in a Docker container
  
  If you come across any issues in setting up, please let me know.
 
