@@ -29,10 +29,10 @@ namespace MyRoverServiceAPI.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/zip")]
-        [Route("name/{RoverName}/day/{EarthDate}")]
+        [Route("name/{RoverName}")]
         [HttpGet]
         [MyUrlDateDecoder("EarthDate")]
-        public async Task<ActionResult> Get([FromRoute] string RoverName, [FromRoute] string EarthDate, CancellationToken cancellationToken)
+        public async Task<ActionResult> Get(string RoverName, string EarthDate, CancellationToken cancellationToken)
         {
             _myRoversServiceGuard.GuardGetRoverImages(RoverName, EarthDate);
             _ = Enum.TryParse(RoverName, true, out RoversEnum roverInput);
