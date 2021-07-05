@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MyRoverServiceAPI.Exceptions;
+﻿using MyRoverServiceAPI.Exceptions;
 using MyRoverServiceAPI.Persistance;
 using MyRoverServiceAPI.Services;
 using System;
@@ -16,18 +13,15 @@ namespace MyRoverServiceAPI
     {
 
         private readonly IMarsRoverService _marsRoverService;
-        private readonly RoverApiSettings _options;
         private readonly IMyMarsRoverServiceValidator _myMarsRoverServiceValidator;
         private readonly IRoverPhotoRepository _roverPhotoRepository;
 
         public MyMarsRoverService(IMarsRoverService marsRoverService,
-            IOptions<RoverApiSettings> options,
             IMyMarsRoverServiceValidator myMarsRoverServiceValidator,
             IRoverPhotoRepository roverPhotoRepository)
         {
             //ToDo: implementation.Unit tests
             _marsRoverService = marsRoverService;
-            _options = options.Value;
             _myMarsRoverServiceValidator = myMarsRoverServiceValidator;
             _roverPhotoRepository = roverPhotoRepository;
         }
@@ -81,8 +75,6 @@ namespace MyRoverServiceAPI
                 {
 
                     var roverPagePhotos = await marsRoverService.GetPhotos(RoverName, inputDay, i, cancellationToken);
-                    var folderPath = $"{_options.ImagesDirectoryPath}/{RoverName}/{inputDay.ToString(MyMarsRoverServiceConstants.DATE_FORMAT)}";
-                    Directory.CreateDirectory(folderPath);
                     var photoNames = new List<string>();
                     foreach (var photo in roverPagePhotos.Photos)
                     {
@@ -113,7 +105,7 @@ namespace MyRoverServiceAPI
 
             using var ImageStream = await marsRoverService.GetRoverPhotoImage(Url, cancellationToken);
             using MemoryStream ms = new MemoryStream();
-            await ImageStream.CopyToAsync(ms,cancellationToken);
+            await ImageStream.CopyToAsync(ms, cancellationToken);
 
             var photo = new MyRoverPhotoInMemory
             {

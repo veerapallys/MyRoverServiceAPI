@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MyRoverServiceAPI.Filters;
 using MyRoverServiceAPI.Services;
-using MyRoverServiceAPI.ViewModels;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +32,7 @@ namespace MyRoverServiceAPI.V1
         [Route("name/{RoverName}/day/{EarthDate}")]
         [HttpGet]
         [MyUrlDateDecoder("EarthDate")]
-        public async Task<ActionResult> Get([FromRoute]string RoverName, [FromRoute] string EarthDate, CancellationToken cancellationToken)
+        public async Task<ActionResult> Get([FromRoute] string RoverName, [FromRoute] string EarthDate, CancellationToken cancellationToken)
         {
             _myRoversServiceGuard.GuardGetRoverImages(RoverName, EarthDate);
             _ = Enum.TryParse(RoverName, true, out RoversEnum roverInput);
