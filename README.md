@@ -75,10 +75,11 @@ The appsettings.json file has following default values for rover that can be mod
 8. Global Exception handling is used for better presentation of messages.
 9. Filter is used to handle the date encoding issue in url path. 
 10. Static Analysis is completed with Visual Studio built-in code analyzer.
- 
+11. Added unit tests in a seperate project. XUnit,Moq and Shouldly packages have been used. 
+
 #### Next Coming up
  
- 1. unit tests, performance tests
+ 1. performance tests
  2. UI Application to display the images in a web browser
  3. Have the application run in a Docker container
  
