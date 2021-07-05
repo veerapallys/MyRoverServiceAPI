@@ -20,7 +20,7 @@ This is based on asp.net core 5 framework.
 ```
 #### End point Details:
 
-This API exposes a **GET** end point  **(/api/v1/rover/name/{RoverName}/day/{EarthDate})**. This can be verified using the added swagger page **(/swagger/index.html)**
+This API exposes a **GET** end point  **(/api/v1/rover/name/{RoverName}?earthdate={EarthDate})**. This can be verified using the added swagger page **(/swagger/index.html)**
 
 **Input**: Any valid rover and date and in a valid format can be used.
 ```
